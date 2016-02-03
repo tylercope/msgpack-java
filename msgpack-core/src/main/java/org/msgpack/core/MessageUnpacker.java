@@ -1096,8 +1096,10 @@ public class MessageUnpacker
                 return new ExtensionTypeHeader(type, 8);
             }
             case Code.FIXEXT16: {
-                byte type = readByte();
-                return new ExtensionTypeHeader(type, 16);
+                // Supports reading creationix/msgpack-js extension for Node binary Buffers with length up to (2^16)-1 bytes.
+                byte type = 0;
+                int len = readNextLength16();
+                return new ExtensionTypeHeader(type, len);
             }
             case Code.EXT8: {
                 MessageBuffer numberBuffer = prepareNumberBuffer(2);
